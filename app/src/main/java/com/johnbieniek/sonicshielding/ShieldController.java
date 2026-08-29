@@ -15,7 +15,7 @@ final class ShieldController {
 
     static void setEnabled(Context context, boolean enabled) {
         ShieldPreferences.setShieldEnabled(context, enabled);
-        updateLauncherIcon(context, enabled);
+        updateLauncherIconForProfile(context);
         Intent serviceIntent = new Intent(context, ShieldService.class)
                 .setAction(enabled ? ShieldService.ACTION_ENABLE : ShieldService.ACTION_DISABLE);
 
@@ -28,6 +28,7 @@ final class ShieldController {
     }
 
     static void refreshProfile(Context context) {
+        updateLauncherIconForProfile(context);
         if (ShieldPreferences.isShieldEnabled(context)) {
             Intent intent = new Intent(context, ShieldService.class).setAction(ShieldService.ACTION_REFRESH);
             context.startForegroundService(intent);
@@ -38,7 +39,10 @@ final class ShieldController {
         TileService.requestListeningState(context, new android.content.ComponentName(context, ShieldTileService.class));
     }
 
-    private static void updateLauncherIcon(Context context, boolean enabled) {
+    private static void updateLauncherIconForProfile(Context context) {
+        boolean enabled = ProfileMath.shouldUseActiveIcon(
+                ShieldPreferences.isBeepBlockerEnabled(context),
+                ShieldPreferences.isEqEnabled(context));
         PackageManager manager = context.getPackageManager();
         ComponentName active = new ComponentName(context, enabled ? "com.johnbieniek.sonicshielding.ShieldOn" : "com.johnbieniek.sonicshielding.ShieldOff");
         ComponentName inactive = new ComponentName(context, enabled ? "com.johnbieniek.sonicshielding.ShieldOff" : "com.johnbieniek.sonicshielding.ShieldOn");

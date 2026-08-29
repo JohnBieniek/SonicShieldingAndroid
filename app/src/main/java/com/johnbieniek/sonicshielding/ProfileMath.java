@@ -41,4 +41,7 @@ public final class ProfileMath {
         }
         return closest;
     }
+    public static boolean shouldUseActiveIcon(boolean beepBlockerEnabled, boolean comfortEqEnabled) {
+        return beepBlockerEnabled || comfortEqEnabled;
+    }
 }

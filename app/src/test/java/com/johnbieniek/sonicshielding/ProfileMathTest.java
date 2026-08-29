@@ -27,4 +27,10 @@ public final class ProfileMathTest {
         assertEquals(100, ProfileMath.additionalProtectionReduction(8000, true, 1000, 100, false));
         assertEquals(0, ProfileMath.additionalProtectionReduction(2000, true, 1000, 100, true));
     }
+    @Test public void iconIsRedOnlyWhenBothProtectionsAreOff() {
+        assertEquals(false, ProfileMath.shouldUseActiveIcon(false, false));
+        assertEquals(true, ProfileMath.shouldUseActiveIcon(true, false));
+        assertEquals(true, ProfileMath.shouldUseActiveIcon(false, true));
+        assertEquals(true, ProfileMath.shouldUseActiveIcon(true, true));
+    }
 }
