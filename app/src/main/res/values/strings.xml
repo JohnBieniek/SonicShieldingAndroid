@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sonic Shielding</string>
+    <string name="comfort_profile">Comfort profile</string>
+    <string name="profile_title">Your comfort profile</string>
+    <string name="profile_intro">Reduce frequencies that feel sharp or tiring. The profile stays on this device and is only applied while the shield is on.</string>
+    <string name="permanent_comfort_eq">Permanent comfort EQ</string>
+    <string name="reset_profile">Reset to Sonic Shielding defaults</string>
+    <string name="device_note">Android only exposes system-wide equalization on some devices. If your manufacturer blocks output-mix effects, Sonic Shielding will tell you in its notification. This app does not record audio and is not a medical device.</string>
+    <string name="reduction_value">%1$d%% reduction</string>
+    <string name="shield_on">Sonic Shielding is on</string>
+    <string name="notification_active">Comfort profile is active</string>
+    <string name="notification_profile_off">Shield is on; comfort EQ is disabled</string>
+    <string name="notification_unavailable">This device does not support output-mix EQ</string>
+    <string name="turn_off">Turn off</string>
+    <string name="status_channel">Shield status</string>
+    <string name="status_channel_description">Keeps Sonic Shielding visible while audio comfort protection is enabled.</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="shortcut_profile_short">Comfort profile</string>
+    <string name="shortcut_profile_long">Open the Sonic Shielding comfort profile</string>
+</resources>

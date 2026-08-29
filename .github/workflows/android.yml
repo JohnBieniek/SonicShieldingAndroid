@@ -1,0 +1,30 @@
+name: Android build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+      - uses: android-actions/setup-android@v3
+      - name: Test, lint, and build
+        run: |
+          chmod +x gradlew
+          ./gradlew test lint assembleDebug bundleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sonic-shielding-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sonic-shielding-release-bundle-unsigned
+          path: app/build/outputs/bundle/release/app-release.aab

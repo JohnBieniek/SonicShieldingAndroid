@@ -1,0 +1,6 @@
+Sonic Shielding provides quick access to a locally stored audio comfort profile. Tap the app icon or Quick Settings tile to turn protection on and off. Long-press the app icon to open the nine-band Comfort Profile.
+
+On Android devices that expose global output-mix audio effects to third-party apps, Sonic Shielding applies the selected frequency reductions across device playback. Support varies by manufacturer and Android version.
+
+Sonic Shielding requests no microphone permission, records no audio, uses no analytics, and sends nothing to a server. It is a comfort tool—not a medical device or hearing test.
+
