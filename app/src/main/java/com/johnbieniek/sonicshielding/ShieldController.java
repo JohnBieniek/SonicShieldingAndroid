@@ -3,6 +3,7 @@ package com.johnbieniek.sonicshielding;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.service.quicksettings.TileService;
 
 final class ShieldController {
@@ -22,9 +23,15 @@ final class ShieldController {
     static void refreshProfile(Context context) {
         boolean enabled = ShieldPreferences.isShieldEnabled(context);
         updateLauncherIcon(context, enabled);
-        if (enabled) {
+        Intent service = new Intent(context, ShieldService.class);
+        if (enabled && ShieldPreferences.shouldKeepRunning(context)) {
+            AUDIO_EFFECT.release();
+            context.startForegroundService(service);
+        } else if (enabled) {
+            context.stopService(service);
             AUDIO_EFFECT.apply(context.getApplicationContext());
         } else {
+            context.stopService(service);
             AUDIO_EFFECT.release();
         }
         refreshTile(context);

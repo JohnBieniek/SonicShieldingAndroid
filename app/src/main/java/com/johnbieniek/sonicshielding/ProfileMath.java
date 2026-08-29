@@ -20,17 +20,15 @@ public final class ProfileMath {
         return Math.max(reduction, protection);
     }
     public static int scaledProtectionReduction(int frequencyHz, int requestedStrength, boolean preserveSpeech) {
-        int doubled = Math.max(0, Math.min(200, requestedStrength * 2));
-        if (preserveSpeech && frequencyHz <= 4000) doubled = Math.min(doubled, 35);
-        return Math.min(100, doubled);
+        return protectionStageReduction(frequencyHz, true, 0, requestedStrength, preserveSpeech, 0);
     }
-    public static int additionalProtectionReduction(int frequencyHz, boolean beepBlocker,
-                                                    int minimumProtectedFrequency, int requestedStrength,
-                                                    boolean preserveSpeech) {
+    public static int protectionStageReduction(int frequencyHz, boolean beepBlocker,
+                                               int minimumProtectedFrequency, int requestedStrength,
+                                               boolean preserveSpeech, int stage) {
         if (!beepBlocker || frequencyHz < minimumProtectedFrequency) return 0;
-        int doubled = Math.max(0, Math.min(200, requestedStrength * 2));
-        if (preserveSpeech && frequencyHz <= 4000) doubled = Math.min(doubled, 35);
-        return Math.max(0, doubled - 100);
+        int quadrupled = Math.max(0, Math.min(400, requestedStrength * 4));
+        if (preserveSpeech && frequencyHz <= 4000) quadrupled = Math.min(quadrupled, 35);
+        return Math.max(0, Math.min(100, quadrupled - (stage * 100)));
     }
     public static int closestFrequencyIndex(int frequencyHz, int[] centersHz) {
         int closest = 0;

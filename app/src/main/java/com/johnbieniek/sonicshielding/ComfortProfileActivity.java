@@ -1,10 +1,13 @@
 package com.johnbieniek.sonicshielding;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +67,18 @@ public final class ComfortProfileActivity extends Activity {
         LinearLayout warning = card(GOLD);
         warning.addView(text("Use care with sound.", 16, Typeface.BOLD, TEXT));
         warning.addView(body("This is a comfort tool, not a medical or hearing test. Begin with a low device volume and stop a test tone immediately if it is uncomfortable."));
+        warning.addView(text("Why there is a notification", 16, Typeface.BOLD, TEXT), topMargin(dp(18)));
+        warning.addView(body("Android requires a visible notification to keep protection running after the app leaves the screen. Turning this off removes the notification, but Android may later release the audio effects."));
+        Switch keepRunning = toggle("Keep protection running", ShieldPreferences.shouldKeepRunning(this));
+        keepRunning.setOnCheckedChangeListener((button, checked) -> {
+            ShieldPreferences.setKeepRunning(this, checked);
+            if (checked && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                    && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 11);
+            }
+            refresh();
+        });
+        warning.addView(keepRunning, topMargin(dp(8)));
         page.addView(warning, cardParams());
 
         page.addView(buildProtectionCard(), cardParams());

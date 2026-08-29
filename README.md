@@ -10,7 +10,7 @@ Sonic Shielding for Android is a native, local-only audio comfort app inspired b
 - Tapping the launcher icon saves the active blocker combination and turns all blockers off; tapping again restores that exact combination.
 - Test each clearly labeled frequency range with a quiet, one-second representative tone.
 - Configure beep blocking, speech protection, aggressive alarm blocking, sudden-sound reduction, and the permanent comfort EQ using the original Sonic Shielding profile model.
-- The protection-strength scale is calibrated so 50% matches the original maximum attenuation; 100% requests a second equal DSP stage for approximately twice the decibel reduction on supported devices.
+- The protection-strength scale is calibrated so 25% matches the original maximum attenuation, 50% matches the previously doubled maximum, and 100% requests four equal DSP stages on supported devices.
 
 ## Android capability and limitations
 
@@ -50,6 +50,6 @@ After installation:
 3. Optionally enable and adjust **Permanent comfort EQ** to suit your comfort profile.
 4. Optionally add Sonic Shielding from the Quick Settings tile editor.
 
-The app intentionally posts no notifications and requests no notification permission. Without a foreground notification, Android may release audio effects when it reclaims the app process; tap the icon to restore the saved protection combination and audio effects.
+By default, the app shows an ongoing notification because Android requires one to keep protection running reliably. **Keep protection running** in Comfort Profile explains and controls it. Turning that setting off removes the notification, but Android may release the audio effects when it reclaims the app process; tap the icon to restore them.
 
 See [STORE_RELEASES.md](STORE_RELEASES.md) for multi-store release guidance and [PRIVACY.md](PRIVACY.md) for the privacy policy.

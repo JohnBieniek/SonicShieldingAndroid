@@ -3,6 +3,10 @@
     <string name="app_name">Sonic Shielding</string>
     <string name="comfort_profile">Comfort profile</string>
     <string name="reduction_value">%1$d%% reduction</string>
+    <string name="shield_on">Sonic Shielding is ON</string>
+    <string name="persistent_status">This notification keeps audio protection running. Disable it in Comfort profile.</string>
+    <string name="status_channel">Persistent protection</string>
+    <string name="status_channel_description">Keeps audio comfort effects active when Android clears background apps.</string>
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="shortcut_profile_short">Comfort profile</string>

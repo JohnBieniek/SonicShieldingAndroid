@@ -23,6 +23,7 @@ public final class ShieldPreferences {
     private static final String SAVED_BEEP = "saved_beep_blocker";
     private static final String SAVED_ALARM = "saved_alarm_blocker";
     private static final String SAVED_EQ = "saved_comfort_eq";
+    private static final String KEEP_RUNNING = "keep_protection_running";
 
     private ShieldPreferences() {}
     private static SharedPreferences preferences(Context context) { return context.getSharedPreferences(FILE, Context.MODE_PRIVATE); }
@@ -83,6 +84,12 @@ public final class ShieldPreferences {
                 .putBoolean(ALARM_BLOCKER, hasSavedProfile && saved.getBoolean(SAVED_ALARM, false))
                 .putBoolean(EQ_ENABLED, hasSavedProfile && saved.getBoolean(SAVED_EQ, false))
                 .apply();
+    }
+    public static boolean shouldKeepRunning(Context context) {
+        return preferences(context).getBoolean(KEEP_RUNNING, true);
+    }
+    public static void setKeepRunning(Context context, boolean value) {
+        preferences(context).edit().putBoolean(KEEP_RUNNING, value).apply();
     }
     public static void resetProfile(Context context) {
         SharedPreferences.Editor editor = preferences(context).edit().putBoolean(EQ_ENABLED, false);

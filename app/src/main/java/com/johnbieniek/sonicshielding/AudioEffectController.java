@@ -11,6 +11,7 @@ final class AudioEffectController {
     private static final String TAG = "SonicShielding";
     private Equalizer equalizer;
     private DynamicsProcessing additionalProtection;
+    private DynamicsProcessing maximumProtection;
 
     boolean apply(Context context) {
         release();
@@ -42,6 +43,7 @@ final class AudioEffectController {
             equalizer.setEnabled(true);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 applyAdditionalProtection(context, levelRange[0], beepBlocker);
+                applyMaximumProtection(context, levelRange[0], beepBlocker);
             }
             return true;
         } catch (RuntimeException error) {
@@ -57,17 +59,24 @@ final class AudioEffectController {
             int bandCount = ShieldPreferences.FREQUENCIES.length;
             DynamicsProcessing.Config config = new DynamicsProcessing.Config.Builder(
                     DynamicsProcessing.VARIANT_FAVOR_FREQUENCY_RESOLUTION,
-                    2, false, 0, false, 0, true, bandCount, false).build();
+                    2, true, bandCount, false, 0, true, bandCount, false).build();
             additionalProtection = new DynamicsProcessing(0, 0, config);
             for (int band = 0; band < bandCount; band++) {
                 int frequency = ShieldPreferences.FREQUENCIES[band];
-                int extra = ProfileMath.additionalProtectionReduction(frequency, beepBlocker,
+                int preEqExtra = ProfileMath.protectionStageReduction(frequency, beepBlocker,
                         ShieldPreferences.getMinimumFrequency(context),
                         ShieldPreferences.getTonalReduction(context),
-                        ShieldPreferences.isSpeechProtectionEnabled(context));
-                float gainDb = (minimumLevel / 100f) * (extra / 100f);
+                        ShieldPreferences.isSpeechProtectionEnabled(context), 1);
+                int postEqExtra = ProfileMath.protectionStageReduction(frequency, beepBlocker,
+                        ShieldPreferences.getMinimumFrequency(context),
+                        ShieldPreferences.getTonalReduction(context),
+                        ShieldPreferences.isSpeechProtectionEnabled(context), 2);
+                float preEqGainDb = (minimumLevel / 100f) * (preEqExtra / 100f);
+                float postEqGainDb = (minimumLevel / 100f) * (postEqExtra / 100f);
+                additionalProtection.setPreEqBandAllChannelsTo(band,
+                        new DynamicsProcessing.EqBand(true, frequency, preEqGainDb));
                 additionalProtection.setPostEqBandAllChannelsTo(band,
-                        new DynamicsProcessing.EqBand(true, frequency, gainDb));
+                        new DynamicsProcessing.EqBand(true, frequency, postEqGainDb));
             }
             additionalProtection.setEnabled(true);
         } catch (RuntimeException error) {
@@ -76,8 +85,34 @@ final class AudioEffectController {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.P)
+    private void applyMaximumProtection(Context context, short minimumLevel, boolean beepBlocker) {
+        try {
+            int bandCount = ShieldPreferences.FREQUENCIES.length;
+            DynamicsProcessing.Config config = new DynamicsProcessing.Config.Builder(
+                    DynamicsProcessing.VARIANT_FAVOR_FREQUENCY_RESOLUTION,
+                    2, false, 0, false, 0, true, bandCount, false).build();
+            maximumProtection = new DynamicsProcessing(0, 0, config);
+            for (int band = 0; band < bandCount; band++) {
+                int frequency = ShieldPreferences.FREQUENCIES[band];
+                int extra = ProfileMath.protectionStageReduction(frequency, beepBlocker,
+                        ShieldPreferences.getMinimumFrequency(context),
+                        ShieldPreferences.getTonalReduction(context),
+                        ShieldPreferences.isSpeechProtectionEnabled(context), 3);
+                float gainDb = (minimumLevel / 100f) * (extra / 100f);
+                maximumProtection.setPostEqBandAllChannelsTo(band,
+                        new DynamicsProcessing.EqBand(true, frequency, gainDb));
+            }
+            maximumProtection.setEnabled(true);
+        } catch (RuntimeException error) {
+            Log.w(TAG, "Maximum protection stage is not available on this device", error);
+            releaseMaximumProtection();
+        }
+    }
+
     void release() {
         releaseAdditionalProtection();
+        releaseMaximumProtection();
         if (equalizer != null) {
             try {
                 equalizer.setEnabled(false);
@@ -98,6 +133,18 @@ final class AudioEffectController {
                 Log.w(TAG, "Unable to release additional protection cleanly", error);
             }
             additionalProtection = null;
+        }
+    }
+
+    private void releaseMaximumProtection() {
+        if (maximumProtection != null) {
+            try {
+                maximumProtection.setEnabled(false);
+                maximumProtection.release();
+            } catch (RuntimeException error) {
+                Log.w(TAG, "Unable to release maximum protection cleanly", error);
+            }
+            maximumProtection = null;
         }
     }
 }

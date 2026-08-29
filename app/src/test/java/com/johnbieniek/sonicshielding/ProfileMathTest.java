@@ -20,12 +20,16 @@ public final class ProfileMathTest {
         assertEquals(100, ProfileMath.effectiveReduction(8000, 0, false, true, 1000, 99, true, true));
         assertEquals(0, ProfileMath.effectiveReduction(500, 0, false, true, 1000, 99, true, true));
     }
-    @Test public void fiftyIsOldMaximumAndOneHundredAddsASecondStage() {
-        assertEquals(100, ProfileMath.scaledProtectionReduction(8000, 50, false));
-        assertEquals(0, ProfileMath.additionalProtectionReduction(8000, true, 1000, 50, false));
+    @Test public void twentyFiveIsOldMaximumAndOneHundredUsesFourStages() {
+        assertEquals(100, ProfileMath.scaledProtectionReduction(8000, 25, false));
+        assertEquals(0, ProfileMath.protectionStageReduction(8000, true, 1000, 25, false, 1));
         assertEquals(100, ProfileMath.scaledProtectionReduction(8000, 100, false));
-        assertEquals(100, ProfileMath.additionalProtectionReduction(8000, true, 1000, 100, false));
-        assertEquals(0, ProfileMath.additionalProtectionReduction(2000, true, 1000, 100, true));
+        assertEquals(100, ProfileMath.protectionStageReduction(8000, true, 1000, 50, false, 1));
+        assertEquals(0, ProfileMath.protectionStageReduction(8000, true, 1000, 50, false, 2));
+        assertEquals(100, ProfileMath.protectionStageReduction(8000, true, 1000, 100, false, 1));
+        assertEquals(100, ProfileMath.protectionStageReduction(8000, true, 1000, 100, false, 2));
+        assertEquals(100, ProfileMath.protectionStageReduction(8000, true, 1000, 100, false, 3));
+        assertEquals(0, ProfileMath.protectionStageReduction(2000, true, 1000, 100, true, 1));
     }
     @Test public void iconIsRedOnlyWhenBothProtectionsAreOff() {
         assertEquals(false, ProfileMath.shouldUseActiveIcon(false, false));
