@@ -4,7 +4,7 @@ Sonic Shielding for Android is a native, local-only audio comfort app inspired b
 
 ## Controls
 
-- Tap the launcher icon to toggle your remembered protection profile on or off. This does not open Android's playback-capture prompt.
+- Tap the stable launcher icon to toggle your remembered protection profile on or off. This does not open Android's playback-capture prompt. The Quick Settings tile reports the current on/off state.
 - Long-press the launcher icon and choose **Comfort profile** to edit the nine-band EQ.
 - Add the **Sonic Shielding** Quick Settings tile for a visible on/off control.
 - Tapping the launcher icon saves the active blocker combination and turns all blockers off; tapping again restores that exact combination.

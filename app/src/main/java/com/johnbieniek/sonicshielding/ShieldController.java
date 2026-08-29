@@ -1,10 +1,9 @@
 package com.johnbieniek.sonicshielding;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.Intent;
 import android.service.quicksettings.TileService;
+import android.content.ComponentName;
 
 final class ShieldController {
     private static final AudioEffectController AUDIO_EFFECT = new AudioEffectController();
@@ -30,7 +29,6 @@ final class ShieldController {
                         ShieldPreferences.isCaptureActive(context));
         boolean captureEnabled = ShieldPreferences.isBeepBlockerEnabled(context)
                 && ShieldPreferences.isCaptureActive(context);
-        updateLauncherIcon(context, enabled);
         Intent service = new Intent(context, ShieldService.class);
         if (captureEnabled || (processingEnabled && ShieldPreferences.shouldKeepRunning(context))) {
             AUDIO_EFFECT.release();
@@ -52,19 +50,4 @@ final class ShieldController {
                 new ComponentName(context, ShieldTileService.class));
     }
 
-    private static void updateLauncherIcon(Context context, boolean enabled) {
-        PackageManager manager = context.getPackageManager();
-        ComponentName active = new ComponentName(context, enabled
-                ? "com.johnbieniek.sonicshielding.ShieldOn"
-                : "com.johnbieniek.sonicshielding.ShieldOff");
-        ComponentName inactive = new ComponentName(context, enabled
-                ? "com.johnbieniek.sonicshielding.ShieldOff"
-                : "com.johnbieniek.sonicshielding.ShieldOn");
-        manager.setComponentEnabledSetting(active,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP);
-        manager.setComponentEnabledSetting(inactive,
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP);
-    }
 }

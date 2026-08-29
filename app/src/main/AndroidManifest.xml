@@ -35,15 +35,7 @@
             android:excludeFromRecents="true"
             android:exported="true"
             android:noHistory="true"
-            android:theme="@style/Theme.SonicShielding.Transparent" />
-
-        <activity-alias
-            android:name=".ShieldOff"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@drawable/logo_inactive"
-            android:label="@string/app_name"
-            android:targetActivity=".ToggleActivity">
+            android:theme="@style/Theme.SonicShielding.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -51,23 +43,7 @@
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
-        </activity-alias>
-
-        <activity-alias
-            android:name=".ShieldOn"
-            android:enabled="true"
-            android:exported="true"
-            android:icon="@drawable/logo_tight"
-            android:label="@string/app_name"
-            android:targetActivity=".ToggleActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts" />
-        </activity-alias>
+        </activity>
 
         <service
             android:name=".ShieldService"
