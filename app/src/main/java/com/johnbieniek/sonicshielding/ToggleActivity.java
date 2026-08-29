@@ -15,7 +15,8 @@ public final class ToggleActivity extends Activity {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
             boolean turningOn = !ShieldPreferences.isShieldEnabled(this);
-            if (turningOn && ShieldPreferences.shouldKeepRunning(this)
+            if (turningOn && ShieldPreferences.willRestoreComfortEq(this)
+                    && ShieldPreferences.shouldKeepRunning(this)
                     && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                     && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION);

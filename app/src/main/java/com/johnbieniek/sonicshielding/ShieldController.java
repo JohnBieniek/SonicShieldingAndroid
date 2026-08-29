@@ -22,12 +22,15 @@ final class ShieldController {
 
     static void refreshProfile(Context context) {
         boolean enabled = ShieldPreferences.isShieldEnabled(context);
+        boolean processingEnabled = ProfileMath.shouldApplyPermanentFiltering(
+                ShieldPreferences.isBeepBlockerEnabled(context),
+                ShieldPreferences.isEqEnabled(context));
         updateLauncherIcon(context, enabled);
         Intent service = new Intent(context, ShieldService.class);
-        if (enabled && ShieldPreferences.shouldKeepRunning(context)) {
+        if (processingEnabled && ShieldPreferences.shouldKeepRunning(context)) {
             AUDIO_EFFECT.release();
             context.startForegroundService(service);
-        } else if (enabled) {
+        } else if (processingEnabled) {
             context.stopService(service);
             AUDIO_EFFECT.apply(context.getApplicationContext());
         } else {

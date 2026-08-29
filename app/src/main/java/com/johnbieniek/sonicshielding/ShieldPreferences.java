@@ -85,6 +85,10 @@ public final class ShieldPreferences {
                 .putBoolean(EQ_ENABLED, hasSavedProfile && saved.getBoolean(SAVED_EQ, false))
                 .apply();
     }
+    public static boolean willRestoreComfortEq(Context context) {
+        SharedPreferences saved = preferences(context);
+        return saved.getBoolean(SAVED_PROFILE, false) && saved.getBoolean(SAVED_EQ, false);
+    }
     public static boolean shouldKeepRunning(Context context) {
         return preferences(context).getBoolean(KEEP_RUNNING, true);
     }

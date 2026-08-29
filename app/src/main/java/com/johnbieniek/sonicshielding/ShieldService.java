@@ -25,7 +25,7 @@ public final class ShieldService extends Service {
     }
 
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
-        if (!ShieldPreferences.isShieldEnabled(this) || !ShieldPreferences.shouldKeepRunning(this)) {
+        if (!ShieldPreferences.isEqEnabled(this) || !ShieldPreferences.shouldKeepRunning(this)) {
             audioEffect.release();
             stopForeground(STOP_FOREGROUND_REMOVE);
             stopSelf();

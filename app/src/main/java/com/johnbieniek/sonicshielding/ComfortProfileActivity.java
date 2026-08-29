@@ -68,11 +68,12 @@ public final class ComfortProfileActivity extends Activity {
         warning.addView(text("Use care with sound.", 16, Typeface.BOLD, TEXT));
         warning.addView(body("This is a comfort tool, not a medical or hearing test. Begin with a low device volume and stop a test tone immediately if it is uncomfortable."));
         warning.addView(text("Why there is a notification", 16, Typeface.BOLD, TEXT), topMargin(dp(18)));
-        warning.addView(body("Android requires a visible notification to keep protection running after the app leaves the screen. Turning this off removes the notification, but Android may later release the audio effects."));
+        warning.addView(body("Android requires a visible notification to keep the optional Comfort EQ running after the app leaves the screen. Turning this off removes the notification, but Android may later release that EQ."));
         Switch keepRunning = toggle("Keep protection running", ShieldPreferences.shouldKeepRunning(this));
         keepRunning.setOnCheckedChangeListener((button, checked) -> {
             ShieldPreferences.setKeepRunning(this, checked);
-            if (checked && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+            if (checked && ShieldPreferences.isEqEnabled(this)
+                    && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                     && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 11);
             }
@@ -119,7 +120,7 @@ public final class ComfortProfileActivity extends Activity {
 
         LinearLayout tonal = innerCard();
         tonal.addView(text("Tone-specific protection", 17, Typeface.BOLD, TEXT));
-        tonal.addView(body("On supported devices, Sonic Shielding reduces protected upper-frequency bands while leaving lower sound intact."));
+        tonal.addView(body("Beep and alarm settings never apply permanent filtering. Normal speech and music remain unchanged unless Comfort EQ is enabled."));
 
         Spinner strength = new Spinner(this);
         String[] strengths = {"Low", "Balanced", "Strong"};
@@ -172,7 +173,7 @@ public final class ComfortProfileActivity extends Activity {
                 value -> value + "% reduced", value -> ShieldPreferences.setSuddenSoundReduction(this, value)));
         card.addView(spike, innerParams());
 
-        TextView support = body("Android compatibility note: ordinary apps cannot capture and rewrite every other app's mixed audio. The active output-mix EQ is device-dependent; adaptive detection settings are retained in your profile but only apply where Android exposes a compatible audio path.");
+        TextView support = body("Android compatibility note: the Chrome extension can inspect a tab's live samples and temporarily notch detected peaks. Android does not expose an equivalent universal mixed-output path to ordinary apps. These adaptive settings are retained, but they do not continuously filter normal sound. Only Comfort EQ applies permanent filtering.");
         support.setTextColor(GOLD);
         card.addView(support, topMargin(dp(14)));
         return card;
