@@ -17,7 +17,14 @@ public final class ProfileMathTest {
     }
     @Test public void speechProtectionCapsProtectedSpeechBands() {
         assertEquals(35, ProfileMath.effectiveReduction(2000, 0, false, true, 1000, 99, true, false));
-        assertEquals(99, ProfileMath.effectiveReduction(8000, 0, false, true, 1000, 99, true, true));
+        assertEquals(100, ProfileMath.effectiveReduction(8000, 0, false, true, 1000, 99, true, true));
         assertEquals(0, ProfileMath.effectiveReduction(500, 0, false, true, 1000, 99, true, true));
+    }
+    @Test public void fiftyIsOldMaximumAndOneHundredAddsASecondStage() {
+        assertEquals(100, ProfileMath.scaledProtectionReduction(8000, 50, false));
+        assertEquals(0, ProfileMath.additionalProtectionReduction(8000, true, 1000, 50, false));
+        assertEquals(100, ProfileMath.scaledProtectionReduction(8000, 100, false));
+        assertEquals(100, ProfileMath.additionalProtectionReduction(8000, true, 1000, 100, false));
+        assertEquals(0, ProfileMath.additionalProtectionReduction(2000, true, 1000, 100, true));
     }
 }

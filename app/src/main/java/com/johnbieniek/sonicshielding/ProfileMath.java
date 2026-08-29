@@ -13,10 +13,24 @@ public final class ProfileMath {
                                          boolean aggressiveAlarmBlocking) {
         int reduction = comfortEnabled ? comfortReduction : 0;
         if (!beepBlocker || frequencyHz < minimumProtectedFrequency) return reduction;
-        int protection = maximumTonalReduction;
-        if (preserveSpeech && frequencyHz <= 4000) protection = Math.min(protection, 35);
-        if (aggressiveAlarmBlocking && frequencyHz >= 5000) protection = maximumTonalReduction;
+        int protection = scaledProtectionReduction(frequencyHz, maximumTonalReduction, preserveSpeech);
+        if (aggressiveAlarmBlocking && frequencyHz >= 5000) {
+            protection = scaledProtectionReduction(frequencyHz, maximumTonalReduction, false);
+        }
         return Math.max(reduction, protection);
+    }
+    public static int scaledProtectionReduction(int frequencyHz, int requestedStrength, boolean preserveSpeech) {
+        int doubled = Math.max(0, Math.min(200, requestedStrength * 2));
+        if (preserveSpeech && frequencyHz <= 4000) doubled = Math.min(doubled, 35);
+        return Math.min(100, doubled);
+    }
+    public static int additionalProtectionReduction(int frequencyHz, boolean beepBlocker,
+                                                    int minimumProtectedFrequency, int requestedStrength,
+                                                    boolean preserveSpeech) {
+        if (!beepBlocker || frequencyHz < minimumProtectedFrequency) return 0;
+        int doubled = Math.max(0, Math.min(200, requestedStrength * 2));
+        if (preserveSpeech && frequencyHz <= 4000) doubled = Math.min(doubled, 35);
+        return Math.max(0, doubled - 100);
     }
     public static int closestFrequencyIndex(int frequencyHz, int[] centersHz) {
         int closest = 0;

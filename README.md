@@ -10,6 +10,7 @@ Sonic Shielding for Android is a native, local-only audio comfort app inspired b
 - Use the ongoing notification to turn protection off or open the profile.
 - Test each clearly labeled frequency range with a quiet, one-second representative tone.
 - Configure beep blocking, speech protection, aggressive alarm blocking, sudden-sound reduction, and the permanent comfort EQ using the original Sonic Shielding profile model.
+- The protection-strength scale is calibrated so 50% matches the original maximum attenuation; 100% requests a second equal DSP stage for approximately twice the decibel reduction on supported devices.
 
 ## Android capability and limitations
 
