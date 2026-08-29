@@ -67,7 +67,7 @@ public final class ShieldService extends Service {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         String status;
-        if (!ShieldPreferences.isEqEnabled(this)) {
+        if (!ShieldPreferences.isEqEnabled(this) && !ShieldPreferences.isBeepBlockerEnabled(this)) {
             status = getString(R.string.notification_profile_off);
         } else if (effectAvailable) {
             status = getString(R.string.notification_active);

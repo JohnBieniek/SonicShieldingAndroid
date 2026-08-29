@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="shield_navy">#111936</color>
-    <color name="shield_blue">#6267E8</color>
+    <color name="shield_aqua">#36D7CA</color>
+    <color name="shield_text">#EEFCFF</color>
 </resources>

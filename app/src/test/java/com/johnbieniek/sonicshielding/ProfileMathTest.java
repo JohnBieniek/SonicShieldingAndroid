@@ -15,5 +15,9 @@ public final class ProfileMathTest {
         assertEquals(0, ProfileMath.closestFrequencyIndex(60, new int[]{63, 125, 250}));
         assertEquals(2, ProfileMath.closestFrequencyIndex(220, new int[]{63, 125, 250}));
     }
+    @Test public void speechProtectionCapsProtectedSpeechBands() {
+        assertEquals(35, ProfileMath.effectiveReduction(2000, 0, false, true, 1000, 99, true, false));
+        assertEquals(99, ProfileMath.effectiveReduction(8000, 0, false, true, 1000, 99, true, true));
+        assertEquals(0, ProfileMath.effectiveReduction(500, 0, false, true, 1000, 99, true, true));
+    }
 }
-

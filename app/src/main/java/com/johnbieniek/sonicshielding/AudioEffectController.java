@@ -10,7 +10,9 @@ final class AudioEffectController {
 
     boolean apply(Context context) {
         release();
-        if (!ShieldPreferences.isEqEnabled(context)) {
+        boolean comfortEnabled = ShieldPreferences.isEqEnabled(context);
+        boolean beepBlocker = ShieldPreferences.isBeepBlockerEnabled(context);
+        if (!comfortEnabled && !beepBlocker) {
             return true;
         }
 
@@ -24,8 +26,13 @@ final class AudioEffectController {
             for (short band = 0; band < bands; band++) {
                 int centerHz = equalizer.getCenterFreq(band) / 1000;
                 int profileIndex = ProfileMath.closestFrequencyIndex(centerHz, ShieldPreferences.FREQUENCIES);
+                int effectiveReduction = ProfileMath.effectiveReduction(centerHz, reductions[profileIndex],
+                        comfortEnabled, beepBlocker, ShieldPreferences.getMinimumFrequency(context),
+                        ShieldPreferences.getTonalReduction(context),
+                        ShieldPreferences.isSpeechProtectionEnabled(context),
+                        ShieldPreferences.isAlarmBlockerEnabled(context));
                 short level = ProfileMath.reductionToBandLevel(
-                        reductions[profileIndex], levelRange[0], levelRange[1]);
+                        effectiveReduction, levelRange[0], levelRange[1]);
                 equalizer.setBandLevel(band, level);
             }
             equalizer.setEnabled(true);

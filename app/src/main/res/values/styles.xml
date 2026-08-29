@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.SonicShielding" parent="android:style/Theme.Material.Light.NoActionBar">
+    <style name="Theme.SonicShielding" parent="android:style/Theme.Material.NoActionBar">
         <item name="android:fontFamily">sans</item>
-        <item name="android:colorAccent">@color/shield_blue</item>
+        <item name="android:colorAccent">@color/shield_aqua</item>
+        <item name="android:windowBackground">@color/shield_navy</item>
+        <item name="android:textColorPrimary">@color/shield_text</item>
         <item name="android:navigationBarColor">@color/shield_navy</item>
         <item name="android:statusBarColor">@color/shield_navy</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowActionModeOverlay">true</item>
     </style>
-    <style name="Theme.SonicShielding.Transparent" parent="android:style/Theme.Material.Light.NoActionBar">
+    <style name="Theme.SonicShielding.Transparent" parent="android:style/Theme.Material.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
