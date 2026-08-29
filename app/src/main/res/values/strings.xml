@@ -4,7 +4,7 @@
     <string name="comfort_profile">Comfort profile</string>
     <string name="reduction_value">%1$d%% reduction</string>
     <string name="shield_on">Sonic Shielding is ON</string>
-    <string name="persistent_status">This notification keeps the optional Comfort EQ running. Disable it in Comfort profile.</string>
+    <string name="persistent_status">This notification keeps continuous audio protection running. Adjust or disable it in Comfort profile.</string>
     <string name="capture_status">Playback protection is analyzing eligible media on this device. Tap to adjust or stop it.</string>
     <string name="status_channel">Persistent protection</string>
     <string name="status_channel_description">Shows when playback analysis or persistent audio comfort effects are active.</string>

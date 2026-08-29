@@ -22,4 +22,8 @@ public final class ProfileMath {
     public static boolean shouldApplyPermanentFiltering(boolean beepBlockerEnabled, boolean comfortEqEnabled) {
         return comfortEqEnabled;
     }
+    public static boolean shouldApplyFallbackFiltering(boolean beepBlockerEnabled,
+                                                       boolean playbackCaptureActive) {
+        return beepBlockerEnabled && !playbackCaptureActive;
+    }
 }

@@ -49,7 +49,7 @@ After installation:
 1. Tap the Sonic Shielding icon once to turn your remembered profile on.
 2. Long-press the icon and choose **Comfort profile**.
 3. Press **Start playback capture** only if you want adaptive beep and alarm detection, then approve Android's prompt. Android labels this screen sharing, but Sonic Shielding requests playback audio only and does not capture screen images or video.
-4. Playback capture is optional: test tones and Comfort EQ still work without it, but adaptive beep and alarm detection does not.
+4. Playback capture is optional. Without it, Beep Blocker uses a continuous upper-frequency fallback that provides attenuation but can muffle normal speech and music. With capture, it switches to adaptive beep and alarm detection.
 5. Optionally enable and adjust **Permanent comfort EQ** to suit your comfort profile.
 6. Optionally add Sonic Shielding from the Quick Settings tile editor.
 

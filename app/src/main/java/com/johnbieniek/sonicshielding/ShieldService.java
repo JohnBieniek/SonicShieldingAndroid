@@ -51,7 +51,7 @@ public final class ShieldService extends Service {
                     intent.getParcelableExtra(EXTRA_RESULT_DATA));
         } else if (projection != null && ShieldPreferences.isBeepBlockerEnabled(this)) {
             startAsForeground(true);
-        } else if (ShieldPreferences.isEqEnabled(this) && ShieldPreferences.shouldKeepRunning(this)) {
+        } else if (hasContinuousEffect() && ShieldPreferences.shouldKeepRunning(this)) {
             startAsForeground(false);
             audioEffect.apply(this);
         } else {
@@ -183,7 +183,7 @@ public final class ShieldService extends Service {
         if (oldProjection != null) oldProjection.stop();
     }
     private void finishCaptureSession() {
-        if (ShieldPreferences.isEqEnabled(this) && ShieldPreferences.shouldKeepRunning(this)) {
+        if (hasContinuousEffect() && ShieldPreferences.shouldKeepRunning(this)) {
             startAsForeground(false);
             audioEffect.apply(this);
         } else {
@@ -191,6 +191,12 @@ public final class ShieldService extends Service {
             stopForeground(STOP_FOREGROUND_REMOVE);
             stopSelf();
         }
+    }
+    private boolean hasContinuousEffect() {
+        return ShieldPreferences.isEqEnabled(this)
+                || ProfileMath.shouldApplyFallbackFiltering(
+                        ShieldPreferences.isBeepBlockerEnabled(this),
+                        ShieldPreferences.isCaptureActive(this));
     }
     private void stopEverything() {
         stopCapture(); audioEffect.release(); stopForeground(STOP_FOREGROUND_REMOVE);

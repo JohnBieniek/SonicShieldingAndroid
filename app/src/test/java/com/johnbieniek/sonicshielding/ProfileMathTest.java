@@ -27,4 +27,9 @@ public final class ProfileMathTest {
         assertEquals(true, ProfileMath.shouldApplyPermanentFiltering(false, true));
         assertEquals(true, ProfileMath.shouldApplyPermanentFiltering(true, true));
     }
+    @Test public void beepBlockerFallsBackOnlyWithoutCapture() {
+        assertEquals(false, ProfileMath.shouldApplyFallbackFiltering(false, false));
+        assertEquals(true, ProfileMath.shouldApplyFallbackFiltering(true, false));
+        assertEquals(false, ProfileMath.shouldApplyFallbackFiltering(true, true));
+    }
 }

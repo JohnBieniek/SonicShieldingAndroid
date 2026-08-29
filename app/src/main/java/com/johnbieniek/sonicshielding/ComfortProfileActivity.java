@@ -124,7 +124,7 @@ public final class ComfortProfileActivity extends Activity {
 
         captureStatus = body(ShieldPreferences.isCaptureActive(this)
                 ? "Playback capture is active. Eligible media is analyzed live and discarded."
-                : "Playback capture is stopped. Comfort EQ and test tones still work, but adaptive beep and alarm detection requires playback capture.");
+                : "Playback capture is stopped. Beep Blocker is using its continuous fallback filter, which can muffle normal sound. Start capture for adaptive beep and alarm detection instead.");
         captureStatus.setTextColor(ShieldPreferences.isCaptureActive(this) ? AQUA : GOLD);
         card.addView(captureStatus, topMargin(dp(10)));
         Button capture = button(ShieldPreferences.isCaptureActive(this)
@@ -135,7 +135,7 @@ public final class ComfortProfileActivity extends Activity {
             CapturePermissionActivity.launch(this);
         });
         card.addView(capture, topMargin(dp(8)));
-        TextView captureExplanation = body("Playback capture is optional and starts only when you press this button. Android calls its permission screen sharing because both features use the same system permission. Sonic Shielding requests playback audio only; it does not capture or save screen images or video.");
+        TextView captureExplanation = body("Playback capture is optional and starts only when you press this button. Without it, Beep Blocker continuously reduces the selected upper frequencies and may muffle speech or music. Android calls its permission screen sharing because both features use the same system permission. Sonic Shielding requests playback audio only; it does not capture or save screen images or video.");
         captureExplanation.setTextColor(MUTED);
         card.addView(captureExplanation, topMargin(dp(8)));
 
@@ -369,7 +369,7 @@ public final class ComfortProfileActivity extends Activity {
             boolean active = ShieldPreferences.isCaptureActive(this);
             captureStatus.setText(active
                     ? "Playback capture is active. Eligible media is analyzed live and discarded."
-                    : "Playback capture is stopped. Comfort EQ and test tones still work, but adaptive beep and alarm detection requires playback capture.");
+                    : "Playback capture is stopped. Beep Blocker is using its continuous fallback filter, which can muffle normal sound. Start capture for adaptive beep and alarm detection instead.");
             captureStatus.setTextColor(active ? AQUA : GOLD);
         }
     }

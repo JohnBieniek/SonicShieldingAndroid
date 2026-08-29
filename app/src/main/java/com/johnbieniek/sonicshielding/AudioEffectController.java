@@ -19,9 +19,13 @@ final class AudioEffectController {
 
         // Beep/alarm protection must never be translated into a permanent EQ.
         // Without a live detector, doing so treats all speech and music as a beep.
-        if (detectedHz.isEmpty() && !alarm && !ProfileMath.shouldApplyPermanentFiltering(
+        boolean fallback = ProfileMath.shouldApplyFallbackFiltering(
                 ShieldPreferences.isBeepBlockerEnabled(context),
-                ShieldPreferences.isEqEnabled(context))) return true;
+                ShieldPreferences.isCaptureActive(context));
+        if (detectedHz.isEmpty() && !alarm && !fallback
+                && !ProfileMath.shouldApplyPermanentFiltering(
+                        ShieldPreferences.isBeepBlockerEnabled(context),
+                        ShieldPreferences.isEqEnabled(context))) return true;
 
         try {
             equalizer = new Equalizer(0, 0);
@@ -37,6 +41,9 @@ final class AudioEffectController {
                 int profileIndex = ProfileMath.closestFrequencyIndex(
                         centerHz, ShieldPreferences.FREQUENCIES);
                 int reduction = ShieldPreferences.isEqEnabled(context) ? reductions[profileIndex] : 0;
+                if (fallback && centerHz >= ShieldPreferences.getMinimumFrequency(context)) {
+                    reduction = Math.max(reduction, fallbackReduction(context));
+                }
                 for (int detected : detectedHz) {
                     if (ProfileMath.closestFrequencyIndex(detected, bandCenters) == band) {
                         int adaptiveReduction = ShieldPreferences.getTonalReduction(context);
@@ -55,6 +62,12 @@ final class AudioEffectController {
             release();
             return false;
         }
+    }
+
+    private int fallbackReduction(Context context) {
+        String strength = ShieldPreferences.getProtectionStrength(context);
+        int ceiling = "low".equals(strength) ? 45 : "balanced".equals(strength) ? 70 : 100;
+        return Math.min(ShieldPreferences.getTonalReduction(context), ceiling);
     }
 
     synchronized void release() {

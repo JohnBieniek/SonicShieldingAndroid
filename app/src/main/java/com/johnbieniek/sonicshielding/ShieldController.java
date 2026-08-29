@@ -24,7 +24,10 @@ final class ShieldController {
         boolean enabled = ShieldPreferences.isShieldEnabled(context);
         boolean processingEnabled = ProfileMath.shouldApplyPermanentFiltering(
                 ShieldPreferences.isBeepBlockerEnabled(context),
-                ShieldPreferences.isEqEnabled(context));
+                ShieldPreferences.isEqEnabled(context))
+                || ProfileMath.shouldApplyFallbackFiltering(
+                        ShieldPreferences.isBeepBlockerEnabled(context),
+                        ShieldPreferences.isCaptureActive(context));
         boolean captureEnabled = ShieldPreferences.isBeepBlockerEnabled(context)
                 && ShieldPreferences.isCaptureActive(context);
         updateLauncherIcon(context, enabled);
