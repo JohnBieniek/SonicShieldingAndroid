@@ -57,7 +57,8 @@ public final class ComfortProfileActivity extends Activity {
         brandParams.setMargins(dp(12), 0, 0, 0);
         brand.addView(brandText, brandParams);
         brandText.addView(text("Sonic Shielding", 24, Typeface.BOLD, TEXT));
-        brandText.addView(text("Comfort profile · Softer sound where you need it.", 14, Typeface.NORMAL, MUTED));
+        brandText.addView(text("Comfort profile", 14, Typeface.NORMAL, MUTED));
+        brandText.addView(text("Softer sound where you need it.", 14, Typeface.NORMAL, MUTED));
         page.addView(brand, matchWrap());
 
         LinearLayout warning = card(GOLD);
@@ -83,7 +84,9 @@ public final class ComfortProfileActivity extends Activity {
         whimsy.setImageResource(R.drawable.whimsy_logo);
         whimsy.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         about.addView(whimsy, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(76)));
-        page.addView(about, cardParams());
+        LinearLayout.LayoutParams aboutParams = cardParams();
+        aboutParams.setMargins(0, dp(18), 0, dp(66));
+        page.addView(about, aboutParams);
         return scroll;
     }
 
