@@ -18,6 +18,10 @@ final class ShieldController {
             ShieldPreferences.restoreRememberedBlockers(context);
         }
         refreshProfile(context);
+        if (ShieldPreferences.isBeepBlockerEnabled(context)
+                && !ShieldPreferences.isCaptureActive(context)) {
+            CapturePermissionActivity.launch(context);
+        }
     }
 
     static void refreshProfile(Context context) {
@@ -25,16 +29,20 @@ final class ShieldController {
         boolean processingEnabled = ProfileMath.shouldApplyPermanentFiltering(
                 ShieldPreferences.isBeepBlockerEnabled(context),
                 ShieldPreferences.isEqEnabled(context));
+        boolean captureEnabled = ShieldPreferences.isBeepBlockerEnabled(context)
+                && ShieldPreferences.isCaptureActive(context);
         updateLauncherIcon(context, enabled);
         Intent service = new Intent(context, ShieldService.class);
-        if (processingEnabled && ShieldPreferences.shouldKeepRunning(context)) {
+        if (captureEnabled || (processingEnabled && ShieldPreferences.shouldKeepRunning(context))) {
             AUDIO_EFFECT.release();
+            service.setAction(ShieldService.ACTION_REFRESH);
             context.startForegroundService(service);
         } else if (processingEnabled) {
             context.stopService(service);
             AUDIO_EFFECT.apply(context.getApplicationContext());
         } else {
             context.stopService(service);
+            ShieldPreferences.setCaptureActive(context, false);
             AUDIO_EFFECT.release();
         }
         refreshTile(context);

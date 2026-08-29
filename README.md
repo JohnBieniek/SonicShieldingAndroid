@@ -15,7 +15,9 @@ Sonic Shielding for Android is a native, local-only audio comfort app inspired b
 
 The app uses Android's `Equalizer` audio effect on output-mix session `0`. That is the broadest local, store-compatible output control exposed to third-party apps, but support is device/manufacturer-dependent. Some Android builds block or ignore global effects.
 
-Android does **not** allow an ordinary store app to inspect and rewrite every other app's mixed audio as the Chrome extension does for a tab. Beep and alarm settings are retained without applying continuous attenuation; otherwise speech and ordinary audio would be incorrectly treated as a constant beep. Only the explicitly enabled Comfort EQ applies permanent output-mix filtering. The app requests no microphone or media-projection permission.
+On Android 10 and newer, the app can use Android's user-approved playback-capture workflow to analyze eligible media and game audio in memory. Stable prominent tones receive temporary output-EQ notches, and strict multi-peak alarm signatures can receive broader temporary attenuation. Captured samples are immediately discarded and are never saved or uploaded. Normal audio receives no beep/alarm filtering between detections; only the explicitly enabled Comfort EQ is permanent.
+
+Playback capture cannot inspect protected audio, audio from apps that opt out, calls, alarms, notifications, or content in another Android user profile. Android shows its own consent dialog for every new capture session and requires an ongoing notification. Adaptive attenuation still depends on the manufacturer exposing an output-mix equalizer.
 
 Sonic Shielding is a comfort tool, not a medical device, hearing test, or guarantee that symptoms will be prevented.
 
@@ -44,11 +46,11 @@ Alternatively, copy the APK to the phone, open it, and approve **Install unknown
 
 After installation:
 
-1. Tap the Sonic Shielding icon once to turn protection on.
+1. Tap the Sonic Shielding icon once to turn protection on and approve Android's playback-capture prompt.
 2. Long-press the icon and choose **Comfort profile**.
 3. Optionally enable and adjust **Permanent comfort EQ** to suit your comfort profile.
 4. Optionally add Sonic Shielding from the Quick Settings tile editor.
 
-When Comfort EQ is enabled, the app shows an ongoing notification because Android requires one to keep that EQ running reliably. **Keep protection running** in Comfort Profile explains and controls it. Turning that setting off removes the notification, but Android may release the EQ when it reclaims the app process.
+Android requires an ongoing notification whenever adaptive playback capture is active. **Keep protection running** separately controls whether Comfort EQ remains active after the app closes.
 
 See [STORE_RELEASES.md](STORE_RELEASES.md) for multi-store release guidance and [PRIVACY.md](PRIVACY.md) for the privacy policy.

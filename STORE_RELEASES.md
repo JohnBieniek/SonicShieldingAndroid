@@ -9,7 +9,7 @@ The project produces a standard Android App Bundle (`.aab`) for Google Play and 
 3. Configure Gradle signing from local or CI secrets.
 4. Test output-mix equalizer behavior on representative Samsung, Google, Motorola, and Amazon devices.
 5. Add store screenshots, feature graphics, support contact details, and a hosted copy of `PRIVACY.md`.
-6. Complete each store's current audio-effect and data-safety declarations accurately.
+6. Complete each store's current audio-effect, MediaProjection foreground-service, playback-capture, and data-safety declarations accurately. Google Play requires a foreground-service declaration and demonstration video for the media-projection use case.
 
 ## Distribution targets
 

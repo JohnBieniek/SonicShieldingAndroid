@@ -24,6 +24,7 @@ public final class ShieldPreferences {
     private static final String SAVED_ALARM = "saved_alarm_blocker";
     private static final String SAVED_EQ = "saved_comfort_eq";
     private static final String KEEP_RUNNING = "keep_protection_running";
+    private static final String CAPTURE_ACTIVE = "capture_active";
 
     private ShieldPreferences() {}
     private static SharedPreferences preferences(Context context) { return context.getSharedPreferences(FILE, Context.MODE_PRIVATE); }
@@ -94,6 +95,12 @@ public final class ShieldPreferences {
     }
     public static void setKeepRunning(Context context, boolean value) {
         preferences(context).edit().putBoolean(KEEP_RUNNING, value).apply();
+    }
+    public static boolean isCaptureActive(Context context) {
+        return preferences(context).getBoolean(CAPTURE_ACTIVE, false);
+    }
+    public static void setCaptureActive(Context context, boolean value) {
+        preferences(context).edit().putBoolean(CAPTURE_ACTIVE, value).apply();
     }
     public static void resetProfile(Context context) {
         SharedPreferences.Editor editor = preferences(context).edit().putBoolean(EQ_ENABLED, false);

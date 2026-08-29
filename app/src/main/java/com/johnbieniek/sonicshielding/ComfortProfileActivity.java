@@ -33,6 +33,7 @@ public final class ComfortProfileActivity extends Activity {
 
     private final TonePlayer tonePlayer = new TonePlayer();
     private LinearLayout bandsContainer;
+    private TextView captureStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +69,7 @@ public final class ComfortProfileActivity extends Activity {
         warning.addView(text("Use care with sound.", 16, Typeface.BOLD, TEXT));
         warning.addView(body("This is a comfort tool, not a medical or hearing test. Begin with a low device volume and stop a test tone immediately if it is uncomfortable."));
         warning.addView(text("Why there is a notification", 16, Typeface.BOLD, TEXT), topMargin(dp(18)));
-        warning.addView(body("Android requires a visible notification to keep the optional Comfort EQ running after the app leaves the screen. Turning this off removes the notification, but Android may later release that EQ."));
+        warning.addView(body("Android requires a visible notification while playback capture is active. It can be removed only by stopping adaptive protection. The switch below separately controls whether the optional Comfort EQ stays active after the app closes."));
         Switch keepRunning = toggle("Keep protection running", ShieldPreferences.shouldKeepRunning(this));
         keepRunning.setOnCheckedChangeListener((button, checked) -> {
             ShieldPreferences.setKeepRunning(this, checked);
@@ -90,7 +91,7 @@ public final class ComfortProfileActivity extends Activity {
         TextView privacyTitle = text("Everything stays on your device.", 19, Typeface.BOLD, TEXT);
         privacyTitle.setGravity(Gravity.CENTER);
         about.addView(privacyTitle);
-        TextView privacyBody = body("Your comfort profile is stored locally. Sonic Shielding does not record audio, use the microphone, or send listening data anywhere.");
+        TextView privacyBody = body("Your comfort profile is stored locally. With your explicit permission, eligible playback is analyzed live in memory and immediately discarded. Sonic Shielding does not save audio, use the microphone, or send listening data anywhere.");
         privacyBody.setGravity(Gravity.CENTER);
         about.addView(privacyBody);
         TextView partnership = text("Created in partnership with", 13, Typeface.NORMAL, MUTED);
@@ -115,12 +116,27 @@ public final class ComfortProfileActivity extends Activity {
         enabled.setOnCheckedChangeListener((button, value) -> {
             ShieldPreferences.setBeepBlockerEnabled(this, value);
             refresh();
+            if (value && !ShieldPreferences.isCaptureActive(this)) CapturePermissionActivity.launch(this);
         });
         card.addView(enabled, matchWrap());
 
+        captureStatus = body(ShieldPreferences.isCaptureActive(this)
+                ? "Playback capture is active. Eligible media is analyzed live and discarded."
+                : "Playback capture is stopped. Start it to activate tone and alarm detection.");
+        captureStatus.setTextColor(ShieldPreferences.isCaptureActive(this) ? AQUA : GOLD);
+        card.addView(captureStatus, topMargin(dp(10)));
+        Button capture = button(ShieldPreferences.isCaptureActive(this)
+                ? "Restart playback capture" : "Start playback capture", false);
+        capture.setOnClickListener(view -> {
+            ShieldPreferences.setBeepBlockerEnabled(this, true);
+            ShieldController.refreshProfile(this);
+            CapturePermissionActivity.launch(this);
+        });
+        card.addView(capture, topMargin(dp(8)));
+
         LinearLayout tonal = innerCard();
         tonal.addView(text("Tone-specific protection", 17, Typeface.BOLD, TEXT));
-        tonal.addView(body("Beep and alarm settings never apply permanent filtering. Normal speech and music remain unchanged unless Comfort EQ is enabled."));
+        tonal.addView(body("Captured playback is checked for stable, prominent tones. Temporary notches open only around detected peaks, then release; normal speech and music remain unchanged unless Comfort EQ is enabled."));
 
         Spinner strength = new Spinner(this);
         String[] strengths = {"Low", "Balanced", "Strong"};
@@ -173,7 +189,7 @@ public final class ComfortProfileActivity extends Activity {
                 value -> value + "% reduced", value -> ShieldPreferences.setSuddenSoundReduction(this, value)));
         card.addView(spike, innerParams());
 
-        TextView support = body("Android compatibility note: the Chrome extension can inspect a tab's live samples and temporarily notch detected peaks. Android does not expose an equivalent universal mixed-output path to ordinary apps. These adaptive settings are retained, but they do not continuously filter normal sound. Only Comfort EQ applies permanent filtering.");
+        TextView support = body("Android compatibility note: playback capture works only for eligible media and games whose apps allow capture. Adaptive attenuation also depends on the phone exposing its output-mix equalizer. Protected or opted-out audio cannot be analyzed; Comfort EQ remains the fallback where supported.");
         support.setTextColor(GOLD);
         card.addView(support, topMargin(dp(14)));
         return card;
@@ -341,6 +357,17 @@ public final class ComfortProfileActivity extends Activity {
     private int dp(int value) { return Math.round(value * getResources().getDisplayMetrics().density); }
 
     @Override protected void onDestroy() { tonePlayer.stop(); super.onDestroy(); }
+
+    @Override protected void onResume() {
+        super.onResume();
+        if (captureStatus != null) {
+            boolean active = ShieldPreferences.isCaptureActive(this);
+            captureStatus.setText(active
+                    ? "Playback capture is active. Eligible media is analyzed live and discarded."
+                    : "Playback capture is stopped. Start it to activate tone and alarm detection.");
+            captureStatus.setTextColor(active ? AQUA : GOLD);
+        }
+    }
 
     private interface Formatter { String format(int value); }
     private interface Saver { void save(int value); }
