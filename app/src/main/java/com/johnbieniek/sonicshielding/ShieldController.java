@@ -18,10 +18,6 @@ final class ShieldController {
             ShieldPreferences.restoreRememberedBlockers(context);
         }
         refreshProfile(context);
-        if (ShieldPreferences.isBeepBlockerEnabled(context)
-                && !ShieldPreferences.isCaptureActive(context)) {
-            CapturePermissionActivity.launch(context);
-        }
     }
 
     static void refreshProfile(Context context) {

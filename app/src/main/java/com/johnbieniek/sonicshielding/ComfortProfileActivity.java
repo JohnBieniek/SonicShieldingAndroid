@@ -68,8 +68,11 @@ public final class ComfortProfileActivity extends Activity {
         LinearLayout warning = card(GOLD);
         warning.addView(text("Use care with sound.", 16, Typeface.BOLD, TEXT));
         warning.addView(body("This is a comfort tool, not a medical or hearing test. Begin with a low device volume and stop a test tone immediately if it is uncomfortable."));
-        warning.addView(text("Why there is a notification", 16, Typeface.BOLD, TEXT), topMargin(dp(18)));
-        warning.addView(body("Android requires a visible notification while playback capture is active. It can be removed only by stopping adaptive protection. The switch below separately controls whether the optional Comfort EQ stays active after the app closes."));
+        page.addView(warning, cardParams());
+
+        LinearLayout notification = card(BORDER);
+        notification.addView(text("Why there is a notification", 16, Typeface.BOLD, TEXT));
+        notification.addView(body("Android requires a visible notification while playback capture is active. It can be removed only by stopping adaptive protection. The switch below separately controls whether the optional Comfort EQ stays active after the app closes."));
         Switch keepRunning = toggle("Keep protection running", ShieldPreferences.shouldKeepRunning(this));
         keepRunning.setOnCheckedChangeListener((button, checked) -> {
             ShieldPreferences.setKeepRunning(this, checked);
@@ -80,8 +83,8 @@ public final class ComfortProfileActivity extends Activity {
             }
             refresh();
         });
-        warning.addView(keepRunning, topMargin(dp(8)));
-        page.addView(warning, cardParams());
+        notification.addView(keepRunning, topMargin(dp(8)));
+        page.addView(notification, cardParams());
 
         page.addView(buildProtectionCard(), cardParams());
         page.addView(buildEqCard(), cardParams());
@@ -116,13 +119,12 @@ public final class ComfortProfileActivity extends Activity {
         enabled.setOnCheckedChangeListener((button, value) -> {
             ShieldPreferences.setBeepBlockerEnabled(this, value);
             refresh();
-            if (value && !ShieldPreferences.isCaptureActive(this)) CapturePermissionActivity.launch(this);
         });
         card.addView(enabled, matchWrap());
 
         captureStatus = body(ShieldPreferences.isCaptureActive(this)
                 ? "Playback capture is active. Eligible media is analyzed live and discarded."
-                : "Playback capture is stopped. Start it to activate tone and alarm detection.");
+                : "Playback capture is stopped. Comfort EQ and test tones still work, but adaptive beep and alarm detection requires playback capture.");
         captureStatus.setTextColor(ShieldPreferences.isCaptureActive(this) ? AQUA : GOLD);
         card.addView(captureStatus, topMargin(dp(10)));
         Button capture = button(ShieldPreferences.isCaptureActive(this)
@@ -133,6 +135,9 @@ public final class ComfortProfileActivity extends Activity {
             CapturePermissionActivity.launch(this);
         });
         card.addView(capture, topMargin(dp(8)));
+        TextView captureExplanation = body("Playback capture is optional and starts only when you press this button. Android calls its permission screen sharing because both features use the same system permission. Sonic Shielding requests playback audio only; it does not capture or save screen images or video.");
+        captureExplanation.setTextColor(MUTED);
+        card.addView(captureExplanation, topMargin(dp(8)));
 
         LinearLayout tonal = innerCard();
         tonal.addView(text("Tone-specific protection", 17, Typeface.BOLD, TEXT));
@@ -364,7 +369,7 @@ public final class ComfortProfileActivity extends Activity {
             boolean active = ShieldPreferences.isCaptureActive(this);
             captureStatus.setText(active
                     ? "Playback capture is active. Eligible media is analyzed live and discarded."
-                    : "Playback capture is stopped. Start it to activate tone and alarm detection.");
+                    : "Playback capture is stopped. Comfort EQ and test tones still work, but adaptive beep and alarm detection requires playback capture.");
             captureStatus.setTextColor(active ? AQUA : GOLD);
         }
     }

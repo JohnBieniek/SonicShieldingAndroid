@@ -4,7 +4,7 @@ Sonic Shielding for Android is a native, local-only audio comfort app inspired b
 
 ## Controls
 
-- Tap the launcher icon to toggle protection on or off.
+- Tap the launcher icon to toggle your remembered protection profile on or off. This does not open Android's playback-capture prompt.
 - Long-press the launcher icon and choose **Comfort profile** to edit the nine-band EQ.
 - Add the **Sonic Shielding** Quick Settings tile for a visible on/off control.
 - Tapping the launcher icon saves the active blocker combination and turns all blockers off; tapping again restores that exact combination.
@@ -46,10 +46,12 @@ Alternatively, copy the APK to the phone, open it, and approve **Install unknown
 
 After installation:
 
-1. Tap the Sonic Shielding icon once to turn protection on and approve Android's playback-capture prompt.
+1. Tap the Sonic Shielding icon once to turn your remembered profile on.
 2. Long-press the icon and choose **Comfort profile**.
-3. Optionally enable and adjust **Permanent comfort EQ** to suit your comfort profile.
-4. Optionally add Sonic Shielding from the Quick Settings tile editor.
+3. Press **Start playback capture** only if you want adaptive beep and alarm detection, then approve Android's prompt. Android labels this screen sharing, but Sonic Shielding requests playback audio only and does not capture screen images or video.
+4. Playback capture is optional: test tones and Comfort EQ still work without it, but adaptive beep and alarm detection does not.
+5. Optionally enable and adjust **Permanent comfort EQ** to suit your comfort profile.
+6. Optionally add Sonic Shielding from the Quick Settings tile editor.
 
 Android requires an ongoing notification whenever adaptive playback capture is active. **Keep protection running** separately controls whether Comfort EQ remains active after the app closes.
 
