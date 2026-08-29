@@ -79,6 +79,8 @@ public final class ShieldService extends Service {
                 .setSmallIcon(R.drawable.ic_shield)
                 .setContentTitle(getString(R.string.shield_on))
                 .setContentText(status)
+                .setSubText(getString(R.string.on).toUpperCase(java.util.Locale.ROOT))
+                .setNumber(0)
                 .setContentIntent(profile)
                 .setOngoing(true)
                 .setCategory(Notification.CATEGORY_SERVICE)
@@ -91,6 +93,7 @@ public final class ShieldService extends Service {
         NotificationChannel channel = new NotificationChannel(
                 CHANNEL_ID, getString(R.string.status_channel), NotificationManager.IMPORTANCE_LOW);
         channel.setDescription(getString(R.string.status_channel_description));
+        channel.setShowBadge(false);
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
     }
 

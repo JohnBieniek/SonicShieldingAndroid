@@ -69,9 +69,16 @@ public final class ComfortProfileActivity extends Activity {
         page.addView(buildEqCard(), cardParams());
 
         LinearLayout about = card(BORDER);
-        about.addView(text("Everything stays on your device.", 19, Typeface.BOLD, TEXT));
-        about.addView(body("Your comfort profile is stored locally. Sonic Shielding does not record audio, use the microphone, or send listening data anywhere."));
-        about.addView(text("Created in partnership with", 13, Typeface.NORMAL, MUTED), topMargin(dp(18)));
+        about.setGravity(Gravity.CENTER_HORIZONTAL);
+        TextView privacyTitle = text("Everything stays on your device.", 19, Typeface.BOLD, TEXT);
+        privacyTitle.setGravity(Gravity.CENTER);
+        about.addView(privacyTitle);
+        TextView privacyBody = body("Your comfort profile is stored locally. Sonic Shielding does not record audio, use the microphone, or send listening data anywhere.");
+        privacyBody.setGravity(Gravity.CENTER);
+        about.addView(privacyBody);
+        TextView partnership = text("Created in partnership with", 13, Typeface.NORMAL, MUTED);
+        partnership.setGravity(Gravity.CENTER);
+        about.addView(partnership, topMargin(dp(18)));
         ImageView whimsy = new ImageView(this);
         whimsy.setImageResource(R.drawable.whimsy_logo);
         whimsy.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
