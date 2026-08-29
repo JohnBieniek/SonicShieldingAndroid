@@ -10,8 +10,10 @@ public final class ToneDetectorTest {
     @Test public void stableElectronicToneIsDetectedAfterConsecutiveFrames() {
         ToneDetector detector = new ToneDetector(RATE);
         short[] tone = sine(4000, 0.35);
-        detector.analyze(tone, 1000, 95, true, false);
-        ToneDetector.Detection result = detector.analyze(tone, 1000, 95, true, false);
+        ToneDetector.Detection result = null;
+        for (int frame = 0; frame < 6; frame++) {
+            result = detector.analyze(tone, 1000, 95, true, false);
+        }
         assertTrue(result.active());
         assertTrue(Math.abs(result.frequenciesHz.get(0) - 4000) < 80);
     }
@@ -25,8 +27,19 @@ public final class ToneDetectorTest {
     @Test public void alarmRequiresSeveralStablePeaksWhenSpeechSafe() {
         ToneDetector detector = new ToneDetector(RATE);
         short[] alarm = mixed(2200, 5200, 8200);
-        detector.analyze(alarm, 1000, 95, true, true);
-        assertTrue(detector.analyze(alarm, 1000, 95, true, true).alarm);
+        ToneDetector.Detection result = null;
+        for (int frame = 0; frame < 14; frame++) {
+            result = detector.analyze(alarm, 1000, 95, true, true);
+        }
+        assertTrue(result.alarm);
+    }
+
+    @Test public void shortSpeechLikeHarmonicsDoNotOpenProtection() {
+        ToneDetector detector = new ToneDetector(RATE);
+        short[] voiced = mixed(1200, 2400, 3600, 4800);
+        for (int frame = 0; frame < 5; frame++) {
+            assertFalse(detector.analyze(voiced, 1000, 100, true, true).active());
+        }
     }
 
     private static short[] sine(int frequency, double amplitude) {

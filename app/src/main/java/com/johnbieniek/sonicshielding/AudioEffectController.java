@@ -27,19 +27,23 @@ final class AudioEffectController {
             equalizer = new Equalizer(0, 0);
             short bands = equalizer.getNumberOfBands();
             short[] levelRange = equalizer.getBandLevelRange();
+            int[] bandCenters = new int[bands];
+            for (short band = 0; band < bands; band++) {
+                bandCenters[band] = equalizer.getCenterFreq(band) / 1000;
+            }
             int[] reductions = ShieldPreferences.getReductions(context);
             for (short band = 0; band < bands; band++) {
-                int centerHz = equalizer.getCenterFreq(band) / 1000;
+                int centerHz = bandCenters[band];
                 int profileIndex = ProfileMath.closestFrequencyIndex(
                         centerHz, ShieldPreferences.FREQUENCIES);
                 int reduction = ShieldPreferences.isEqEnabled(context) ? reductions[profileIndex] : 0;
                 for (int detected : detectedHz) {
-                    if (Math.abs(Math.log((double) centerHz / detected) / Math.log(2)) <= 0.72) {
-                        reduction = Math.max(reduction, ShieldPreferences.getTonalReduction(context));
+                    if (ProfileMath.closestFrequencyIndex(detected, bandCenters) == band) {
+                        int adaptiveReduction = ShieldPreferences.getTonalReduction(context);
+                        if (alarm) adaptiveReduction = Math.max(adaptiveReduction,
+                                ShieldPreferences.getSuddenSoundReduction(context));
+                        reduction = Math.max(reduction, adaptiveReduction);
                     }
-                }
-                if (alarm && centerHz >= Math.max(1000, ShieldPreferences.getMinimumFrequency(context) / 2)) {
-                    reduction = Math.max(reduction, ShieldPreferences.getSuddenSoundReduction(context));
                 }
                 equalizer.setBandLevel(band, ProfileMath.reductionToBandLevel(
                         reduction, levelRange[0], levelRange[1]));

@@ -11,7 +11,8 @@ final class ToneDetector {
     private final int sampleRate;
     private final double[] real = new double[FFT_SIZE];
     private final double[] imaginary = new double[FFT_SIZE];
-    private int[] priorBins = new int[0];
+    private List<TrackedPeak> trackedPeaks = new ArrayList<>();
+    private int alarmFrames;
 
     ToneDetector(int sampleRate) { this.sampleRate = sampleRate; }
 
@@ -24,11 +25,14 @@ final class ToneDetector {
             real[i] = sample * (0.5 - 0.5 * Math.cos(2 * Math.PI * i / (FFT_SIZE - 1)));
             imaginary[i] = 0;
         }
-        if (Math.sqrt(squareSum / FFT_SIZE) < MIN_RMS) return remember(new int[0], false);
+        if (Math.sqrt(squareSum / FFT_SIZE) < MIN_RMS) return remember(new ArrayList<>());
         fft(real, imaginary);
         int first = Math.max(2, minimumHz * FFT_SIZE / sampleRate);
         int last = Math.min(FFT_SIZE / 2 - 2, 16000 * FFT_SIZE / sampleRate);
-        double thresholdDb = 12.0 + (50 - sensitivity) * 0.08 + (speechSafe ? 2.0 : 0.0);
+        // Speech routinely produces short, prominent harmonics. Keep the speech-safe
+        // floor deliberately higher than the extension's tab-specific detector.
+        double thresholdDb = Math.max(14.0, 12.0 + (50 - sensitivity) * 0.08)
+                + (speechSafe ? 4.0 : 0.0);
         List<Peak> peaks = new ArrayList<>();
         for (int bin = first; bin <= last; bin++) {
             double magnitude = magnitude(bin);
@@ -45,23 +49,35 @@ final class ToneDetector {
         }
         peaks.sort(Comparator.comparingDouble((Peak peak) -> peak.prominence).reversed());
         if (peaks.size() > 6) peaks = peaks.subList(0, 6);
+        List<TrackedPeak> nextTracked = new ArrayList<>();
         List<Integer> stableHz = new ArrayList<>();
+        int requiredFrames = speechSafe ? 6 : 3;
         for (Peak peak : peaks) {
-            boolean stable = peak.prominence >= 18;
-            for (int old : priorBins) if (Math.abs(old - peak.bin) <= 2) stable = true;
-            if (stable) stableHz.add(Math.round(peak.bin * sampleRate / (float) FFT_SIZE));
+            int frames = 1;
+            for (TrackedPeak old : trackedPeaks) {
+                if (Math.abs(old.bin - peak.bin) <= 2) frames = Math.max(frames, old.frames + 1);
+            }
+            nextTracked.add(new TrackedPeak(peak.bin, frames));
+            if (frames >= requiredFrames) {
+                stableHz.add(Math.round(peak.bin * sampleRate / (float) FFT_SIZE));
+            }
         }
-        int[] current = new int[peaks.size()];
-        for (int i = 0; i < peaks.size(); i++) current[i] = peaks.get(i).bin;
-        boolean alarm = aggressiveAlarm && stableHz.size() >= (speechSafe ? 3 : 2)
+        trackedPeaks = nextTracked;
+        boolean alarmSignature = aggressiveAlarm && stableHz.size() >= (speechSafe ? 3 : 2)
                 && hasHighPeak(stableHz, 5000);
-        priorBins = current;
+        alarmFrames = alarmSignature ? alarmFrames + 1 : 0;
+        boolean alarm = alarmFrames >= (speechSafe ? 8 : 4);
+
+        // A normal beep needs only its strongest confirmed peak. Avoid opening
+        // several coarse device EQ bands for harmonics in speech or music.
+        if (!alarm && stableHz.size() > 1) stableHz = stableHz.subList(0, 1);
         return new Detection(stableHz, alarm);
     }
 
-    private Detection remember(int[] bins, boolean alarm) {
-        priorBins = bins;
-        return new Detection(new ArrayList<>(), alarm);
+    private Detection remember(List<TrackedPeak> peaks) {
+        trackedPeaks = peaks;
+        alarmFrames = 0;
+        return new Detection(new ArrayList<>(), false);
     }
     private boolean hasHighPeak(List<Integer> frequencies, int minimum) {
         for (int value : frequencies) if (value >= minimum) return true;
@@ -108,5 +124,10 @@ final class ToneDetector {
         final int bin;
         final double prominence;
         Peak(int bin, double prominence) { this.bin = bin; this.prominence = prominence; }
+    }
+    private static final class TrackedPeak {
+        final int bin;
+        final int frames;
+        TrackedPeak(int bin, int frames) { this.bin = bin; this.frames = frames; }
     }
 }
