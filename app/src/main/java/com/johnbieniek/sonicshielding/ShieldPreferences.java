@@ -8,7 +8,6 @@ public final class ShieldPreferences {
     public static final int[] FREQUENCIES = {63, 125, 250, 500, 1000, 2000, 4000, 8000, 12000};
     public static final int[] DEFAULT_REDUCTIONS = {0, 0, 0, 0, 97, 98, 99, 100, 100};
     private static final String FILE = "sonic_shielding";
-    private static final String ENABLED = "enabled";
     private static final String EQ_ENABLED = "comfort_eq_enabled";
     private static final String REDUCTION_PREFIX = "reduction_";
     private static final String BEEP_BLOCKER = "beep_blocker";
@@ -20,13 +19,16 @@ public final class ShieldPreferences {
     private static final String TONAL_REDUCTION = "tonal_reduction";
     private static final String MINIMUM_FREQUENCY = "minimum_frequency";
     private static final String RELEASE_DURATION = "release_duration";
+    private static final String SAVED_PROFILE = "saved_toggle_profile";
+    private static final String SAVED_BEEP = "saved_beep_blocker";
+    private static final String SAVED_ALARM = "saved_alarm_blocker";
+    private static final String SAVED_EQ = "saved_comfort_eq";
 
     private ShieldPreferences() {}
     private static SharedPreferences preferences(Context context) { return context.getSharedPreferences(FILE, Context.MODE_PRIVATE); }
-    public static boolean isEnabled(Context context) { return preferences(context).getBoolean(ENABLED, false); }
-    public static void setEnabled(Context context, boolean enabled) { preferences(context).edit().putBoolean(ENABLED, enabled).apply(); }
-    public static boolean isShieldEnabled(Context context) { return isEnabled(context); }
-    public static void setShieldEnabled(Context context, boolean enabled) { setEnabled(context, enabled); }
+    public static boolean isShieldEnabled(Context context) {
+        return isBeepBlockerEnabled(context) || isEqEnabled(context);
+    }
     public static boolean isComfortEqEnabled(Context context) { return preferences(context).getBoolean(EQ_ENABLED, false); }
     public static void setComfortEqEnabled(Context context, boolean enabled) { preferences(context).edit().putBoolean(EQ_ENABLED, enabled).apply(); }
     public static boolean isEqEnabled(Context context) { return isComfortEqEnabled(context); }
@@ -61,6 +63,26 @@ public final class ShieldPreferences {
     public static void setReleaseDuration(Context context, int value) { setInt(context, RELEASE_DURATION, value, 40, 250); }
     private static void setInt(Context context, String key, int value, int minimum, int maximum) {
         preferences(context).edit().putInt(key, Math.max(minimum, Math.min(maximum, value))).apply();
+    }
+    public static void rememberAndDisableBlockers(Context context) {
+        preferences(context).edit()
+                .putBoolean(SAVED_PROFILE, true)
+                .putBoolean(SAVED_BEEP, isBeepBlockerEnabled(context))
+                .putBoolean(SAVED_ALARM, isAlarmBlockerEnabled(context))
+                .putBoolean(SAVED_EQ, isEqEnabled(context))
+                .putBoolean(BEEP_BLOCKER, false)
+                .putBoolean(ALARM_BLOCKER, false)
+                .putBoolean(EQ_ENABLED, false)
+                .apply();
+    }
+    public static void restoreRememberedBlockers(Context context) {
+        SharedPreferences saved = preferences(context);
+        boolean hasSavedProfile = saved.getBoolean(SAVED_PROFILE, false);
+        saved.edit()
+                .putBoolean(BEEP_BLOCKER, hasSavedProfile ? saved.getBoolean(SAVED_BEEP, true) : true)
+                .putBoolean(ALARM_BLOCKER, hasSavedProfile && saved.getBoolean(SAVED_ALARM, false))
+                .putBoolean(EQ_ENABLED, hasSavedProfile && saved.getBoolean(SAVED_EQ, false))
+                .apply();
     }
     public static void resetProfile(Context context) {
         SharedPreferences.Editor editor = preferences(context).edit().putBoolean(EQ_ENABLED, false);

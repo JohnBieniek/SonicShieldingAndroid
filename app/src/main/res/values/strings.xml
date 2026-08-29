@@ -3,13 +3,6 @@
     <string name="app_name">Sonic Shielding</string>
     <string name="comfort_profile">Comfort profile</string>
     <string name="reduction_value">%1$d%% reduction</string>
-    <string name="shield_on">Sonic Shielding is on</string>
-    <string name="notification_active">Protection profile is active</string>
-    <string name="notification_profile_off">Shield is on; comfort EQ is disabled</string>
-    <string name="notification_unavailable">This device does not support output-mix EQ</string>
-    <string name="turn_off">Turn off</string>
-    <string name="status_channel">Shield status</string>
-    <string name="status_channel_description">Keeps Sonic Shielding visible while audio comfort protection is enabled.</string>
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="shortcut_profile_short">Comfort profile</string>

@@ -1,1 +1,1 @@
-Initial Android preview with tap-to-toggle protection, comfort profile, Quick Settings tile, and foreground status controls.
+Initial Android preview with remembered tap-to-toggle protection, comfort profile, and Quick Settings controls.

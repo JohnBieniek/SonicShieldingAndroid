@@ -7,7 +7,7 @@ Sonic Shielding for Android is a native, local-only audio comfort app inspired b
 - Tap the launcher icon to toggle protection on or off.
 - Long-press the launcher icon and choose **Comfort profile** to edit the nine-band EQ.
 - Add the **Sonic Shielding** Quick Settings tile for a visible on/off control.
-- Use the ongoing notification to turn protection off or open the profile.
+- Tapping the launcher icon saves the active blocker combination and turns all blockers off; tapping again restores that exact combination.
 - Test each clearly labeled frequency range with a quiet, one-second representative tone.
 - Configure beep blocking, speech protection, aggressive alarm blocking, sudden-sound reduction, and the permanent comfort EQ using the original Sonic Shielding profile model.
 - The protection-strength scale is calibrated so 50% matches the original maximum attenuation; 100% requests a second equal DSP stage for approximately twice the decibel reduction on supported devices.
@@ -46,9 +46,10 @@ Alternatively, copy the APK to the phone, open it, and approve **Install unknown
 After installation:
 
 1. Tap the Sonic Shielding icon once to turn protection on.
-2. Approve notification permission so Android can keep the foreground protection service visible.
-3. Long-press the icon and choose **Comfort profile**.
-4. Optionally enable and adjust **Permanent comfort EQ** to suit your comfort profile.
-5. Optionally add Sonic Shielding from the Quick Settings tile editor.
+2. Long-press the icon and choose **Comfort profile**.
+3. Optionally enable and adjust **Permanent comfort EQ** to suit your comfort profile.
+4. Optionally add Sonic Shielding from the Quick Settings tile editor.
+
+The app intentionally posts no notifications and requests no notification permission. Without a foreground notification, Android may release audio effects when it reclaims the app process; tap the icon to restore the saved protection combination and audio effects.
 
 See [STORE_RELEASES.md](STORE_RELEASES.md) for multi-store release guidance and [PRIVACY.md](PRIVACY.md) for the privacy policy.
