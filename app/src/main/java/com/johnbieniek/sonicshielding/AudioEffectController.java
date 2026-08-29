@@ -36,6 +36,10 @@ final class AudioEffectController {
                 bandCenters[band] = equalizer.getCenterFreq(band) / 1000;
             }
             int[] reductions = ShieldPreferences.getReductions(context);
+            boolean adaptiveProtection = alarm || !detectedHz.isEmpty();
+            int adaptiveReduction = ShieldPreferences.getTonalReduction(context);
+            if (alarm) adaptiveReduction = Math.max(adaptiveReduction,
+                    ShieldPreferences.getSuddenSoundReduction(context));
             for (short band = 0; band < bands; band++) {
                 int centerHz = bandCenters[band];
                 int profileIndex = ProfileMath.closestFrequencyIndex(
@@ -44,13 +48,14 @@ final class AudioEffectController {
                 if (fallback && centerHz >= ShieldPreferences.getMinimumFrequency(context)) {
                     reduction = Math.max(reduction, fallbackReduction(context));
                 }
-                for (int detected : detectedHz) {
-                    if (ProfileMath.closestFrequencyIndex(detected, bandCenters) == band) {
-                        int adaptiveReduction = ShieldPreferences.getTonalReduction(context);
-                        if (alarm) adaptiveReduction = Math.max(adaptiveReduction,
-                                ShieldPreferences.getSuddenSoundReduction(context));
-                        reduction = Math.max(reduction, adaptiveReduction);
-                    }
+                // Android's output-mix Equalizer exposes only a handful of broad bands.
+                // Reducing just the closest band lets much of a beep's harmonics through,
+                // making capture mode weaker than the continuous fallback. Once the
+                // detector confirms a tone, temporarily protect the full configured
+                // high-frequency region; ShieldService releases it as soon as the tone ends.
+                if (adaptiveProtection
+                        && centerHz >= ShieldPreferences.getMinimumFrequency(context)) {
+                    reduction = Math.max(reduction, adaptiveReduction);
                 }
                 equalizer.setBandLevel(band, ProfileMath.reductionToBandLevel(
                         reduction, levelRange[0], levelRange[1]));
